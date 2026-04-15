@@ -139,9 +139,9 @@ function M.render()
 
 	local label = mode_label()
 	local hl = mode_hl[label] or "StatusLineMode"
-	left[#left + 1] = "%#StatusLineMode#["
+	left[#left + 1] = "%#StatusLineMode#[ "
 	left[#left + 1] = "%#" .. hl .. "#" .. label
-	left[#left + 1] = "%#StatusLineMode#]"
+	left[#left + 1] = "%#StatusLineMode# ] "
 
 	local git = fugitive_status()
 	if git ~= "" then
@@ -152,7 +152,7 @@ function M.render()
 			local suffix = git:match("%)(.*)$") or ""
 			left[#left + 1] = "%#StatusLineGit#" .. prefix
 			left[#left + 1] = "%#StatusLineGitBranch#" .. branch
-			left[#left + 1] = "%#StatusLineGit#)" .. suffix
+			left[#left + 1] = "%#StatusLineGit#) " .. suffix
 		else
 			left[#left + 1] = "%#StatusLineGit#" .. git
 		end
