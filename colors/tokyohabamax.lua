@@ -1,5 +1,4 @@
 -- tokyohabamax: Custom color scheme based on habamax and tokyonight
-
 vim.cmd.highlight("clear")
 vim.g.colors_name = "tokyohabamax"
 vim.o.termguicolors = true
@@ -65,7 +64,6 @@ local c = {
 	diff_change = "#252a3f",
 	diff_delete = "#4b2a3d",
 	diff_text = "#394b70",
-
 	-- tab
 	tab_fg = "#3b4261",
 	tab_sel_fg = "#1b1d2b",
@@ -257,7 +255,11 @@ hi("OilNormal", { fg = c.fg_bright, bg = c.bg })
 hi("StatusLine", { fg = c.sl_fg, bg = c.bg_statusline })
 hi("StatusLineNC", { fg = c.sl_fg_nc, bg = c.bg_statusline })
 hi("StatusLineMode", { fg = c.sl_fg, bg = c.bg_statusline, bold = true })
+hi("StatusLineModeN", { fg = c.sl_fg, bg = c.bg_statusline, bold = true })
+hi("StatusLineModeI", { fg = c.green, bg = c.bg_statusline, bold = true })
+hi("StatusLineModeV", { fg = c.accent, bg = c.bg_statusline, bold = true })
 hi("StatusLineGit", { fg = c.sl_fg, bg = c.bg_statusline })
+hi("StatusLineGitBranch", { fg = c.blue7, bg = c.bg_statusline })
 hi("StatusLinePath", { fg = c.sl_fg, bg = c.bg_statusline })
 hi("StatusLineError", { fg = c.sl_error, bg = c.bg_statusline, bold = true })
 hi("StatusLineWarn", { fg = c.sl_warn, bg = c.bg_statusline, bold = true })
@@ -266,4 +268,4 @@ hi("StatusLineLspProgress", { fg = c.sl_lsp_progress, bg = c.bg_statusline, bold
 hi("StatusLineLspReady", { fg = c.sl_lsp_ready, bg = c.bg_statusline, bold = true })
 
 -- QuickFixLine
-hi("QuickFixLine", { bg = "#4f2f4f" })
+hi("QuickFixLine", { bg = "#1b1d2b" })

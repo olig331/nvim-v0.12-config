@@ -83,7 +83,7 @@ function M.setup()
 
 			pcall(vim.lsp.buf.format, {
 				bufnr = args.buf,
-				timeout_ms = 3000,
+				timeout_ms = has_efm and 1000 or 1500,
 				filter = function(client)
 					if has_efm then
 						return client.name == "efm"

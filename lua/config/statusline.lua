@@ -1,23 +1,23 @@
 local M = {}
 
 local mode_names = {
-	n = "N",
-	no = "N",
-	nov = "N",
-	noV = "N",
-	["no\22"] = "N",
-	niI = "N",
-	niR = "N",
-	niV = "N",
-	i = "I",
-	ic = "I",
-	ix = "I",
-	v = "V",
-	vs = "V",
-	V = "VL",
-	Vs = "VL",
-	["\22"] = "VB",
-	["\22s"] = "VB",
+	n = "NOR",
+	no = "NOR",
+	nov = "NOR",
+	noV = "NOR",
+	["no\22"] = "NOR",
+	niI = "NOR",
+	niR = "NOR",
+	niV = "NOR",
+	i = "INS",
+	ic = "INS",
+	ix = "INS",
+	v = "VIS",
+	vs = "VIS",
+	V = "VIL",
+	Vs = "VIL",
+	["\22"] = "VIB",
+	["\22s"] = "VIB",
 	c = "C",
 	cv = "C",
 	ce = "C",
@@ -100,7 +100,7 @@ local function lsp_progress()
 	end
 
 	if #vim.lsp.get_clients({ bufnr = 0 }) > 0 then
-		return "%#StatusLineLspReady#✓"
+		return "%#StatusLineLspReady#"
 	end
 
 	return ""
@@ -113,7 +113,11 @@ local function set_highlights()
 	vim.api.nvim_set_hl(0, "StatusLineNC", { fg = "#888888", bg = bg })
 
 	vim.api.nvim_set_hl(0, "StatusLineMode", { fg = "#dddddd", bg = bg, bold = true })
+	vim.api.nvim_set_hl(0, "StatusLineModeN", { fg = "#dddddd", bg = bg, bold = true })
+	vim.api.nvim_set_hl(0, "StatusLineModeI", { fg = "#5a7e9e", bg = bg, bold = true })
+	vim.api.nvim_set_hl(0, "StatusLineModeV", { fg = "#F29C51", bg = bg, bold = true })
 	vim.api.nvim_set_hl(0, "StatusLineGit", { fg = "#dddddd", bg = bg })
+	vim.api.nvim_set_hl(0, "StatusLineGitBranch", { fg = "#5a7e9e", bg = bg })
 	vim.api.nvim_set_hl(0, "StatusLinePath", { fg = "#dddddd", bg = bg })
 	vim.api.nvim_set_hl(0, "StatusLineError", { fg = "#f38ba8", bg = bg, bold = true })
 	vim.api.nvim_set_hl(0, "StatusLineWarn", { fg = "#f9e2af", bg = bg, bold = true })
@@ -122,18 +126,36 @@ local function set_highlights()
 	vim.api.nvim_set_hl(0, "StatusLineLspReady", { fg = "#a6e3a1", bg = bg, bold = true })
 end
 
+local mode_hl = {
+	NOR = "StatusLineModeN",
+	INS = "StatusLineModeI",
+	VIS = "StatusLineModeV",
+	VIL = "StatusLineModeV",
+	VIB = "StatusLineModeV",
+}
+
 function M.render()
 	local left = {}
 
+	local label = mode_label()
+	local hl = mode_hl[label] or "StatusLineMode"
 	left[#left + 1] = "%#StatusLineMode#["
-	left[#left + 1] = mode_label()
-	left[#left + 1] = "]"
+	left[#left + 1] = "%#" .. hl .. "#" .. label
+	left[#left + 1] = "%#StatusLineMode#]"
 
 	local git = fugitive_status()
 	if git ~= "" then
 		left[#left + 1] = " "
-		left[#left + 1] = "%#StatusLineGit#"
-		left[#left + 1] = git
+		local branch = git:match("%((.-)%)")
+		if branch then
+			local prefix = git:match("^(.-%()") or ""
+			local suffix = git:match("%)(.*)$") or ""
+			left[#left + 1] = "%#StatusLineGit#" .. prefix
+			left[#left + 1] = "%#StatusLineGitBranch#" .. branch
+			left[#left + 1] = "%#StatusLineGit#)" .. suffix
+		else
+			left[#left + 1] = "%#StatusLineGit#" .. git
+		end
 	end
 
 	left[#left + 1] = " "
@@ -145,16 +167,18 @@ function M.render()
 	local diag = diagnostics_count()
 	if diag ~= "" then
 		right[#right + 1] = diag
+		right[#right + 1] = "     "
 	end
 
 	right[#right + 1] = "%#StatusLinePos#%l,%c"
 
 	local lsp = lsp_progress()
 	if lsp ~= "" then
+		right[#right + 1] = "     "
 		right[#right + 1] = lsp
 	end
 
-	return table.concat(left, "") .. "%=" .. table.concat(right, " ") .. " "
+	return table.concat(left, "") .. "%=" .. table.concat(right, "") .. " "
 end
 
 function M.setup()

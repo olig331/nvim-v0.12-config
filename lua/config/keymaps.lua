@@ -87,7 +87,17 @@ function M.setup()
 
 	map("n", "L", ":bnext<CR>", { desc = "Next buffer", noremap = true })
 	map("n", "H", ":bprevious<CR>", { desc = "Previous buffer", noremap = true })
-	map("n", "<leader>bd", ":bdelete<CR>", { desc = "Delete current buffer" })
+	map("n", "<leader>bd", function()
+		local buf = vim.api.nvim_get_current_buf()
+		local bufs = vim.fn.getbufinfo({ buflisted = 1 })
+		if #bufs > 1 then
+			vim.cmd("bnext")
+			if vim.api.nvim_get_current_buf() == buf then
+				vim.cmd("bprevious")
+			end
+		end
+		vim.api.nvim_buf_delete(buf, {})
+	end, { desc = "Delete current buffer" })
 	map("n", "<leader>bD", ':%bdelete|edit #|normal ` "<CR>', { desc = "Delete All but the current buffer" })
 
 	map("n", "<leader>sv", ":split<CR>", { desc = "Horizontal Split" })
