@@ -9,7 +9,6 @@ function M.setup()
 		"https://github.com/neovim/nvim-lspconfig",
 		"https://github.com/christoomey/vim-tmux-navigator",
 		"https://github.com/creativenull/efmls-configs-nvim",
-		"https://github.com/folke/which-key.nvim",
 		"https://github.com/MagicDuck/grug-far.nvim",
 		"https://github.com/windwp/nvim-ts-autotag",
 		"https://github.com/vuki656/package-info.nvim",

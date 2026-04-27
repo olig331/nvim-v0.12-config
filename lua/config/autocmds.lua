@@ -19,7 +19,6 @@ local default_spell_filetype_blacklist = {
 	checkhealth = true,
 	help = true,
 	lspinfo = true,
-	oil = true,
 	qf = true,
 }
 local default_spell_buftype_blacklist = {
@@ -121,6 +120,14 @@ function M.setup()
 		pattern = { "*.env", ".env.*" },
 		callback = function()
 			vim.opt_local.filetype = "sh"
+		end,
+	})
+
+	vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
+		group = augroup("j2_filetype"),
+		pattern = { "*.json.j2" },
+		callback = function()
+			vim.opt_local.filetype = "json"
 		end,
 	})
 

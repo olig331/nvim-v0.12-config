@@ -36,8 +36,6 @@ local function set_spell_highlights()
 end
 
 function M.setup()
-	require("which-key").setup()
-
 	require("mini.ai").setup({})
 	require("mini.hipatterns").setup({
 		highlighters = {

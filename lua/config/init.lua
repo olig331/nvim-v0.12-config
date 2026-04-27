@@ -21,6 +21,8 @@ function M.setup()
 	require("config.formatting").setup()
 	require("config.statusline").setup()
 	require("config.package-info").setup()
+	require("config.clue").setup()
+	require("config.buforder").setup()
 end
 
 return M

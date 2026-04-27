@@ -232,7 +232,6 @@ hi("@markup.underline", { underline = true })
 hi("@markup.heading", { link = "Title" })
 hi("@markup.link", { fg = c.teal })
 hi("@markup.raw", { link = "String" })
-
 -- Blink.cmp
 hi("BlinkCmpMenu", { fg = c.fg_bright, bg = c.bg_float })
 hi("BlinkCmpMenuBorder", { fg = c.bg, bg = c.bg_float })

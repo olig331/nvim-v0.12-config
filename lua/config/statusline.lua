@@ -18,9 +18,9 @@ local mode_names = {
 	Vs = "VIL",
 	["\22"] = "VIB",
 	["\22s"] = "VIB",
-	c = "C",
-	cv = "C",
-	ce = "C",
+	c = "COM",
+	cv = "COM",
+	ce = "COM",
 	r = "R",
 	rm = "R",
 	["r?"] = "R",
@@ -116,6 +116,7 @@ local function set_highlights()
 	vim.api.nvim_set_hl(0, "StatusLineModeN", { fg = "#dddddd", bg = bg, bold = true })
 	vim.api.nvim_set_hl(0, "StatusLineModeI", { fg = "#5a7e9e", bg = bg, bold = true })
 	vim.api.nvim_set_hl(0, "StatusLineModeV", { fg = "#F29C51", bg = bg, bold = true })
+	vim.api.nvim_set_hl(0, "StatusLineModeC", { fg = "#d6949c", bg = bg, bold = true })
 	vim.api.nvim_set_hl(0, "StatusLineGit", { fg = "#dddddd", bg = bg })
 	vim.api.nvim_set_hl(0, "StatusLineGitBranch", { fg = "#5a7e9e", bg = bg })
 	vim.api.nvim_set_hl(0, "StatusLinePath", { fg = "#dddddd", bg = bg })
@@ -124,6 +125,7 @@ local function set_highlights()
 	vim.api.nvim_set_hl(0, "StatusLinePos", { fg = "#dddddd", bg = bg })
 	vim.api.nvim_set_hl(0, "StatusLineLspProgress", { fg = "#89b4fa", bg = bg, bold = true })
 	vim.api.nvim_set_hl(0, "StatusLineLspReady", { fg = "#a6e3a1", bg = bg, bold = true })
+	vim.api.nvim_set_hl(0, "StatusLineModified", { fg = "#F29C51", bg = bg })
 end
 
 local mode_hl = {
@@ -132,6 +134,7 @@ local mode_hl = {
 	VIS = "StatusLineModeV",
 	VIL = "StatusLineModeV",
 	VIB = "StatusLineModeV",
+	COM = "StatusLineModeC",
 }
 
 function M.render()
@@ -161,6 +164,9 @@ function M.render()
 	left[#left + 1] = " "
 	left[#left + 1] = "%#StatusLinePath#%<"
 	left[#left + 1] = filename()
+	if vim.bo.modified then
+		left[#left + 1] = " %#StatusLineModified#●%#StatusLinePath#"
+	end
 
 	local right = {}
 
@@ -203,6 +209,8 @@ function M.setup()
 		"LspDetach",
 		"LspProgress",
 		"ModeChanged",
+		"TextChanged",
+		"InsertLeave",
 	}, {
 		callback = function()
 			vim.cmd("redrawstatus")

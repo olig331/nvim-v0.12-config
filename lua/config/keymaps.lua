@@ -88,16 +88,14 @@ function M.setup()
 	map("n", "L", ":bnext<CR>", { desc = "Next buffer", noremap = true })
 	map("n", "H", ":bprevious<CR>", { desc = "Previous buffer", noremap = true })
 	map("n", "<leader>bd", function()
-		local buf = vim.api.nvim_get_current_buf()
-		local bufs = vim.fn.getbufinfo({ buflisted = 1 })
-		if #bufs > 1 then
-			vim.cmd("bnext")
-			if vim.api.nvim_get_current_buf() == buf then
-				vim.cmd("bprevious")
-			end
-		end
-		vim.api.nvim_buf_delete(buf, {})
-	end, { desc = "Delete current buffer" })
+  local buforder = require("config.buforder")
+  local cur = vim.api.nvim_get_current_buf()
+  local nextbuf = buforder.next_mru()
+  vim.api.nvim_buf_delete(cur, {})
+  if nextbuf and vim.api.nvim_buf_is_valid(nextbuf) and vim.api.nvim_buf_is_loaded(nextbuf) then
+    vim.api.nvim_set_current_buf(nextbuf)
+  end
+end, { desc = "Delete current buffer (MRU)" })
 	map("n", "<leader>bD", ':%bdelete|edit #|normal ` "<CR>', { desc = "Delete All but the current buffer" })
 
 	map("n", "<leader>sv", ":split<CR>", { desc = "Horizontal Split" })
@@ -112,7 +110,7 @@ function M.setup()
 
 	map("n", "J", "mzJ`z", { desc = "Join lines and keep cursor position" })
 
-	map("n", "<leader>pa", function()
+	map("n", "<leader>wd", function()
 		local path = vim.fn.expand("%:p")
 		vim.fn.setreg("+", path)
 		print("file:", path)

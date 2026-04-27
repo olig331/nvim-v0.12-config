@@ -57,7 +57,7 @@ local function lsp_on_attach(ev)
 			vim.diagnostic.jump({ count = 1 })
 		end, vim.tbl_extend("force", opts, { desc = "Next diagnostic" }))
 
-		vim.keymap.set("n", "<leader>pd", function()
+		vim.keymap.set("n", "<leader>ld", function()
 			vim.diagnostic.jump({ count = -1 })
 		end, vim.tbl_extend("force", opts, { desc = "Prev diagnostic" }))
 
