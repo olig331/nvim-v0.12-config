@@ -8,7 +8,10 @@ function M.setup()
 	vim.pack.add({
 		"https://github.com/neovim/nvim-lspconfig",
 		"https://github.com/christoomey/vim-tmux-navigator",
-		"https://github.com/creativenull/efmls-configs-nvim",
+		"https://github.com/williamboman/mason.nvim",
+		"https://github.com/stevearc/conform.nvim",
+		"https://github.com/mfussenegger/nvim-lint",
+		"https://github.com/seblj/roslyn.nvim",
 		"https://github.com/MagicDuck/grug-far.nvim",
 		"https://github.com/windwp/nvim-ts-autotag",
 		"https://github.com/vuki656/package-info.nvim",
@@ -29,10 +32,12 @@ function M.setup()
 			version = vim.version.range("1.*"),
 		},
 	})
-
 	packadd("nvim-treesitter")
 	packadd("blink.cmp")
-	packadd("efmls-configs-nvim")
+	packadd("mason.nvim")
+	packadd("conform.nvim")
+	packadd("nvim-lint")
+	packadd("roslyn.nvim")
 	packadd("oil.nvim")
 	packadd("nvim.undotree")
 end

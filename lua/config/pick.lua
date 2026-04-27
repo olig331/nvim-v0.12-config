@@ -40,7 +40,38 @@ local function jump_to_diagnostic(item)
 end
 
 function M.setup()
-	require("mini.pick").setup({})
+	local pick = require("mini.pick")
+
+	pick.setup({
+		source = {
+			show = function(buf_id, items, query, opts)
+				-- Default rendering (fuzzy match positions)
+				pick.default_show(buf_id, items, query, opts)
+
+				-- Also highlight every literal occurrence of the query in each line
+				local query_str = table.concat(query):lower()
+				if #query_str == 0 then
+					return
+				end
+
+				local ns = vim.api.nvim_create_namespace("user_pick_all_matches")
+				vim.api.nvim_buf_clear_namespace(buf_id, ns, 0, -1)
+
+				for lnum, line in ipairs(vim.api.nvim_buf_get_lines(buf_id, 0, -1, false)) do
+					local low = line:lower()
+					local start = 1
+					while true do
+						local s, e = low:find(query_str, start, true)
+						if not s then
+							break
+						end
+						vim.api.nvim_buf_add_highlight(buf_id, ns, "MiniPickMatchRanges", lnum - 1, s - 1, e)
+						start = e + 1
+					end
+				end
+			end,
+		},
+	})
 	set_highlights()
 
 	vim.api.nvim_create_autocmd("ColorScheme", {

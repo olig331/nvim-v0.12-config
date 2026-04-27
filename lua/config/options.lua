@@ -77,7 +77,7 @@ function M.setup()
 
 	-- Completion and command-line UI.
 	vim.o.complete = ".,o"
-	vim.o.completeopt = "fuzzy,menuone,noinsert,popup,noselect"
+	vim.o.completeopt = "menuone,noinsert,noselect"
 	vim.o.autocomplete = false
 	vim.o.wildmode = "longest:full"
 	vim.o.wildmenu = false

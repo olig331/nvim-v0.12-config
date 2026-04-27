@@ -13,6 +13,10 @@ local function lsp_on_attach(ev)
 	local bufnr = ev.buf
 	local opts = { noremap = true, silent = true, buffer = bufnr }
 
+	-- Blink handles all completion — disable native LSP omnifunc and built-in autocomplete
+	vim.bo[bufnr].omnifunc = ""
+	pcall(vim.lsp.completion.enable, false, client.id, bufnr)
+
 	if not vim.b[bufnr].lsp_keymaps_set then
 		vim.b[bufnr].lsp_keymaps_set = true
 
@@ -108,7 +112,7 @@ local function lsp_on_attach(ev)
 				bufnr = bufnr,
 			})
 			vim.defer_fn(function()
-				vim.lsp.buf.format({ bufnr = bufnr })
+				require("conform").format({ bufnr = bufnr, lsp_format = "never" })
 			end, 50)
 		end, vim.tbl_extend("force", opts, { desc = "Organize imports" }))
 	end
@@ -196,34 +200,6 @@ function M.setup()
 		},
 	})
 
-	vim.lsp.config("efm", {
-		cmd = { "efm-langserver", "-logfile", "/tmp/efm.log", "-loglevel", "5" },
-		filetypes = {
-			"c",
-			"cpp",
-			"css",
-			"go",
-			"html",
-			"javascript",
-			"javascriptreact",
-			"json",
-			"jsonc",
-			"lua",
-			"markdown",
-			"python",
-			"sh",
-			"typescript",
-			"typescriptreact",
-			"vue",
-			"svelte",
-		},
-		offset_encoding = "utf-8",
-		init_options = { documentFormatting = true },
-		settings = {
-			languages = require("config.formatting").languages(),
-		},
-	})
-
 	vim.lsp.config("pyright", {})
 	vim.lsp.config("bashls", {})
 	vim.lsp.config("vtsls", {
@@ -249,7 +225,34 @@ function M.setup()
 	})
 
 	vim.lsp.config("gopls", {})
-	vim.lsp.enable({ "lua_ls", "vimls", "vtsls", "eslint", "efm", "bashls", "gopls" })
+	vim.lsp.config("zls", {})
+	vim.lsp.config("angularls", {})
+	vim.lsp.enable({ "lua_ls", "vimls", "vtsls", "eslint", "bashls", "gopls", "zls", "angularls" })
+
+	require("roslyn").setup({
+		exe = vim.fn.expand("~/.dotnet/tools/roslyn-language-server"),
+		config = {
+			settings = {
+				["csharp|inlay_hints"] = {
+					csharp_enable_inlay_hints_for_implicit_object_creation = true,
+					csharp_enable_inlay_hints_for_implicit_variable_types = true,
+					csharp_enable_inlay_hints_for_lambda_parameter_types = true,
+					csharp_enable_inlay_hints_for_types = true,
+					dotnet_enable_inlay_hints_for_indexer_parameters = true,
+					dotnet_enable_inlay_hints_for_literal_parameters = true,
+					dotnet_enable_inlay_hints_for_object_creation_parameters = true,
+					dotnet_enable_inlay_hints_for_other_parameters = true,
+					dotnet_enable_inlay_hints_for_parameters = true,
+					dotnet_suppress_inlay_hints_for_parameters_that_differ_only_by_suffix = true,
+					dotnet_suppress_inlay_hints_for_parameters_that_match_argument_name = true,
+					dotnet_suppress_inlay_hints_for_parameters_that_match_method_intent = true,
+				},
+				["csharp|code_lens"] = {
+					dotnet_enable_references_code_lens = true,
+				},
+			},
+		},
+	})
 
 	vim.api.nvim_create_user_command("LspLog", function()
 		vim.cmd.edit(vim.lsp.get_log_path())
