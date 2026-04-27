@@ -42,13 +42,6 @@ function M.setup()
 	map({ "n", "i", "v" }, "<S-Down>", "<Nop>")
 	map({ "n", "i", "v" }, "<S-Up>", "<Nop>")
 	map({ "i", "x", "n", "s" }, "<C-s>", "<cmd>w<cr><esc>", { desc = "Save File" })
-	map("i", "<Tab>", function()
-		if vim.fn.pumvisible() == 1 then
-			return "<C-y>"
-		end
-		return "<Tab>"
-	end, { expr = true, silent = true })
-
 	-- Keep existing navigation behavior while defining all picker mappings in one place.
 	map("n", "<leader>ff", ":find ", { desc = "Find file" })
 	map("n", "<leader><leader>", ":Pick files<CR>", { desc = "Find file" })

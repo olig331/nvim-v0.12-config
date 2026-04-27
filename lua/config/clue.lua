@@ -5,13 +5,17 @@ function M.setup()
 	miniclue.setup({
 		window = {
 			delay = 500,
-			config = {
-				anchor = "SW",
-				row = vim.o.lines - 2,
-				col = 0,
-				width = vim.o.columns,
-				height = vim.o.lines - 20,
-			},
+			config = function(buf_id)
+				local n = vim.api.nvim_buf_line_count(buf_id)
+				local max_height = math.floor(vim.o.lines * 0.5)
+				return {
+					anchor = "SW",
+					row = vim.o.lines - 2,
+					col = 0,
+					width = vim.o.columns,
+					height = math.min(n, max_height),
+				}
+			end,
 		},
 		triggers = {
 			-- Leader triggers
@@ -41,9 +45,9 @@ function M.setup()
 			-- `z` key
 			{ mode = { "n", "x" }, keys = "z" },
 		},
-
+		scroll_down = "<C-d>",
+		scroll_up = "<C-u>",
 		clues = {
-			-- Enhance this by adding descriptions for <Leader> mapping groups
 			miniclue.gen_clues.square_brackets(),
 			miniclue.gen_clues.builtin_completion(),
 			miniclue.gen_clues.g(),
