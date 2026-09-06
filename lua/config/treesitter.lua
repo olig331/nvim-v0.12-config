@@ -22,6 +22,7 @@ local ensure_installed = {
 	"yaml",
 	"c_sharp",
 	"bash",
+	"dart",
 }
 
 function M.setup()

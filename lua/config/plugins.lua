@@ -6,6 +6,10 @@ end
 
 function M.setup()
 	vim.pack.add({
+		"https://github.com/FylerOrg/fyler.nvim",
+		"https://github.com/nvim-lua/plenary.nvim",
+		"https://github.com/stevearc/dressing.nvim",
+		"https://github.com/nvim-flutter/flutter-tools.nvim",
 		"https://github.com/neovim/nvim-lspconfig",
 		"https://github.com/christoomey/vim-tmux-navigator",
 		"https://github.com/williamboman/mason.nvim",
@@ -15,7 +19,7 @@ function M.setup()
 		"https://github.com/MagicDuck/grug-far.nvim",
 		"https://github.com/windwp/nvim-ts-autotag",
 		"https://github.com/vuki656/package-info.nvim",
-		"https://github.com/stevearc/oil.nvim",
+		-- "https://github.com/stevearc/oil.nvim",
 		"https://www.github.com/echasnovski/mini.nvim",
 		"https://github.com/tpope/vim-fugitive",
 		{
@@ -34,11 +38,13 @@ function M.setup()
 	})
 	packadd("nvim-treesitter")
 	packadd("blink.cmp")
+	packadd("flutter-tools.nvim")
 	packadd("mason.nvim")
 	packadd("conform.nvim")
 	packadd("nvim-lint")
 	packadd("roslyn.nvim")
-	packadd("oil.nvim")
+	-- packadd("oil.nvim")
+	packadd("fyler.nvim")
 	packadd("nvim.undotree")
 end
 return M

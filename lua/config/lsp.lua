@@ -35,10 +35,15 @@ local function lsp_on_attach(ev)
 			vim.tbl_extend("force", opts, { desc = "Goto declaration" })
 		)
 
-		vim.keymap.set("n", "<leader>gS", function()
+		vim.keymap.set("n", "<leader>gs", function()
 			vim.cmd.vsplit()
 			vim.lsp.buf.definition()
 		end, vim.tbl_extend("force", opts, { desc = "Goto definition in vsplit" }))
+
+		vim.keymap.set("n", "<leader>gS", function()
+			vim.cmd.hsplit()
+			vim.lsp.buf.definition()
+		end, vim.tbl_extend("force", opts, { desc = "Goto definition in hsplit" }))
 
 		vim.keymap.set("n", "K", vim.lsp.buf.hover, vim.tbl_extend("force", opts, { desc = "Hover" }))
 		vim.keymap.set(
@@ -89,6 +94,22 @@ local function lsp_on_attach(ev)
 			vim.lsp.buf.implementation,
 			vim.tbl_extend("force", opts, { desc = "Implementations" })
 		)
+		vim.keymap.set("n", "<leader>gI", function()
+			vim.lsp.buf.implementation({
+				on_list = function(options)
+					vim.fn.setqflist({}, " ", options)
+					vim.cmd.copen()
+				end,
+			})
+		end, vim.tbl_extend("force", opts, { desc = "List implementations" }))
+		vim.keymap.set("n", "<leader>gR", function()
+			vim.lsp.buf.references(nil, {
+				on_list = function(options)
+					vim.fn.setqflist({}, " ", options)
+					vim.cmd.copen()
+				end,
+			})
+		end, vim.tbl_extend("force", opts, { desc = "List references" }))
 		vim.keymap.set(
 			"n",
 			"<leader>fs",
@@ -229,28 +250,32 @@ function M.setup()
 	vim.lsp.config("angularls", {})
 	vim.lsp.enable({ "lua_ls", "vimls", "vtsls", "eslint", "bashls", "gopls", "zls", "angularls" })
 
-	require("roslyn").setup({
-		exe = vim.fn.expand("~/.dotnet/tools/roslyn-language-server"),
-		config = {
-			settings = {
-				["csharp|inlay_hints"] = {
-					csharp_enable_inlay_hints_for_implicit_object_creation = true,
-					csharp_enable_inlay_hints_for_implicit_variable_types = true,
-					csharp_enable_inlay_hints_for_lambda_parameter_types = true,
-					csharp_enable_inlay_hints_for_types = true,
-					dotnet_enable_inlay_hints_for_indexer_parameters = true,
-					dotnet_enable_inlay_hints_for_literal_parameters = true,
-					dotnet_enable_inlay_hints_for_object_creation_parameters = true,
-					dotnet_enable_inlay_hints_for_other_parameters = true,
-					dotnet_enable_inlay_hints_for_parameters = true,
-					dotnet_suppress_inlay_hints_for_parameters_that_differ_only_by_suffix = true,
-					dotnet_suppress_inlay_hints_for_parameters_that_match_argument_name = true,
-					dotnet_suppress_inlay_hints_for_parameters_that_match_method_intent = true,
-				},
-				["csharp|code_lens"] = {
-					dotnet_enable_references_code_lens = true,
-				},
+	vim.lsp.config("roslyn", {
+		cmd = { vim.fn.expand("~/.local/share/nvim/mason/bin/roslyn-language-server"), "--stdio" },
+		settings = {
+			["csharp|inlay_hints"] = {
+				csharp_enable_inlay_hints_for_implicit_object_creation = true,
+				csharp_enable_inlay_hints_for_implicit_variable_types = true,
+				csharp_enable_inlay_hints_for_lambda_parameter_types = true,
+				csharp_enable_inlay_hints_for_types = true,
+				dotnet_enable_inlay_hints_for_indexer_parameters = true,
+				dotnet_enable_inlay_hints_for_literal_parameters = true,
+				dotnet_enable_inlay_hints_for_object_creation_parameters = true,
+				dotnet_enable_inlay_hints_for_other_parameters = true,
+				dotnet_enable_inlay_hints_for_parameters = true,
+				dotnet_suppress_inlay_hints_for_parameters_that_differ_only_by_suffix = true,
+				dotnet_suppress_inlay_hints_for_parameters_that_match_argument_name = true,
+				dotnet_suppress_inlay_hints_for_parameters_that_match_method_intent = true,
 			},
+			["csharp|code_lens"] = {
+				dotnet_enable_references_code_lens = true,
+			},
+		},
+	})
+
+	require("roslyn").setup({
+		extensions = {
+			razor = { enabled = false }, -- disable razor warning
 		},
 	})
 

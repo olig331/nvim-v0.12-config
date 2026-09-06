@@ -20,6 +20,8 @@ local function set_float_highlights()
 	vim.api.nvim_set_hl(0, "BlinkCmpLabelDescription", { fg = "#bdbdbd" })
 	vim.api.nvim_set_hl(0, "MsgArea", { bg = "#1a1a1a", fg = "#eeeeee" })
 	vim.api.nvim_set_hl(0, "CmdLine", { bg = "#1a1a1a", fg = "#eeeeee" })
+	vim.api.nvim_set_hl(0, "WinSeparator", { fg = "#666666", bg = "NONE" })
+	vim.api.nvim_set_hl(0, "VertSplit", { fg = "#666666", bg = "NONE" })
 end
 
 local function set_spell_highlights()
@@ -33,6 +35,7 @@ local function set_spell_highlights()
 
 	vim.api.nvim_set_hl(0, "Visual", { bg = "#595857" })
 	vim.api.nvim_set_hl(0, "IncSearch", { bg = "#F29C51", fg = "#000000" })
+	vim.opt.fillchars:append({ vert = "│" })
 end
 
 function M.setup()

@@ -42,6 +42,7 @@ function M.setup()
 	map({ "n", "i", "v" }, "<S-Down>", "<Nop>")
 	map({ "n", "i", "v" }, "<S-Up>", "<Nop>")
 	map({ "i", "x", "n", "s" }, "<C-s>", "<cmd>w<cr><esc>", { desc = "Save File" })
+	map("n", "<leader>W", "<cmd>noautocmd write<CR>", { desc = "Write without formatting" })
 	-- Keep existing navigation behavior while defining all picker mappings in one place.
 	map("n", "<leader>ff", ":find ", { desc = "Find file" })
 	map("n", "<leader><leader>", ":Pick files<CR>", { desc = "Find file" })
@@ -68,30 +69,78 @@ function M.setup()
 	end)
 
 	map("n", "-", "<CMD>Oil<CR>", { desc = "Open parent directory" })
+	-- map("n", "<leader>e", function()
+	-- 	require("oil").open_float()
+	-- end, { desc = "Open Oil (float)" })
+
+	local fyler_root_path
+	local fyler_instance
+	local fyler_cursor_line
 	map("n", "<leader>e", function()
-		require("oil").open_float()
-	end, { desc = "Open Oil (float)" })
+		local finder = require("fyler.finder")
+		if fyler_instance then
+			if type(fyler_instance.win_id) == "number" and vim.api.nvim_win_is_valid(fyler_instance.win_id) then
+				local cursor = vim.api.nvim_win_get_cursor(fyler_instance.win_id)
+				fyler_cursor_line = cursor[1]
+				vim.api.nvim_win_hide(fyler_instance.win_id)
+			else
+				fyler_instance:open()
+				local function restore_cursor()
+					if type(fyler_instance.win_id) ~= "number" or not vim.api.nvim_win_is_valid(fyler_instance.win_id) then
+						return
+					end
+					if fyler_instance._is_refreshing then
+						vim.defer_fn(restore_cursor, 10)
+						return
+					end
+					local line_count = vim.api.nvim_buf_line_count(fyler_instance.buf_id)
+					local line = math.min(fyler_cursor_line or 1, line_count)
+					vim.api.nvim_win_set_cursor(fyler_instance.win_id, { line, 0 })
+				end
+				vim.defer_fn(restore_cursor, 10)
+			end
+			return
+		end
+
+		local path = fyler_root_path
+		if not path then
+			path = vim.api.nvim_buf_get_name(0)
+			if path == "" or vim.fn.filereadable(path) == 0 then
+				path = vim.fn.getcwd()
+			elseif vim.fn.isdirectory(path) == 0 then
+				path = vim.fs.dirname(path)
+			end
+			fyler_root_path = path
+		end
+		fyler_instance = finder.instance_get(nil, {
+			kind = "split_left_most",
+			root_path = path,
+		})
+		fyler_instance:open()
+	end, { desc = "Fyler.nvim - Open at current level" })
+
+	map("n", "<leader>E", function()
+		local root = vim.fs.root(0, { ".git" }) or vim.fn.getcwd()
+		require("fyler").open({ kind = "split_left_most", root_path = root })
+	end, { desc = "Fyler.nvim - Open at project root" })
 
 	map("n", "n", "nzzzv", { desc = "Next search result (centered)" })
 	map("n", "N", "Nzzzv", { desc = "Prev search result (centered)" })
 	map("n", "<leader>c", ":nohlsearch<CR>", { desc = "Clear search highlights" })
 
-	map("n", "<leader>p", '"_dP', { desc = "Paste Without Yank" })
+	map("n", "<leader>p", "_dP", { desc = "Paste Without Yank" })
+	map("x", "<leader>p", [["_dP]], { desc = "Paste over selection without yanking replaced text" })
 
 	map("n", "L", ":bnext<CR>", { desc = "Next buffer", noremap = true })
 	map("n", "H", ":bprevious<CR>", { desc = "Previous buffer", noremap = true })
-	map("n", "<leader>bd", function()
-  local buforder = require("config.buforder")
-  local cur = vim.api.nvim_get_current_buf()
-  local nextbuf = buforder.next_mru()
-  vim.api.nvim_buf_delete(cur, {})
-  if nextbuf and vim.api.nvim_buf_is_valid(nextbuf) and vim.api.nvim_buf_is_loaded(nextbuf) then
-    vim.api.nvim_set_current_buf(nextbuf)
-  end
-end, { desc = "Delete current buffer (MRU)" })
+	vim.keymap.set("n", "<leader>bd", function()
+		require("config.bufdelete").delete_current_keep_window()
+	end, { desc = "Delete buffer (keep split)" })
 	map("n", "<leader>bD", ':%bdelete|edit #|normal ` "<CR>', { desc = "Delete All but the current buffer" })
 
 	map("n", "<leader>sv", ":split<CR>", { desc = "Horizontal Split" })
+	map("n", "<PageUp>", "<cmd>vertical resize +5<CR>", { desc = "Increase pane width" })
+	map("n", "<PageDown>", "<cmd>vertical resize -5<CR>", { desc = "Decrease pane width" })
 
 	map("n", "<M-j>", ":m .+1<CR>==", { desc = "Move line down" })
 	map("n", "<M-k>", ":m .-2<CR>==", { desc = "Move line up" })
@@ -181,7 +230,7 @@ end, { desc = "Delete current buffer (MRU)" })
 	end, { nargs = 1 })
 
 	map("n", "<leader>fq", ":QFFiles ")
-	map("n", "<leader>/q", ":QFGrep ")
+	map("n", "<leader>f/", ":QFGrep ")
 end
 
 return M
