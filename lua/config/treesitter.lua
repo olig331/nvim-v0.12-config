@@ -23,6 +23,7 @@ local ensure_installed = {
 	"c_sharp",
 	"bash",
 	"dart",
+	"sql",
 }
 
 function M.setup()
@@ -44,12 +45,23 @@ function M.setup()
 		treesitter.install(parsers_to_install)
 	end
 
+	vim.treesitter.query.set("c_sharp", "injections", [[
+((raw_string_content) @injection.content
+  (#set! injection.language "sql"))
+]])
+
 	vim.api.nvim_create_autocmd("FileType", {
 		group = vim.api.nvim_create_augroup("user_treesitter", { clear = true }),
 		callback = function(args)
 			local lang = vim.treesitter.language.get_lang(args.match)
 			if lang and vim.tbl_contains(treesitter.get_installed(), lang) then
 				vim.treesitter.start(args.buf)
+				vim.schedule(function()
+					local parser = vim.treesitter.get_parser(args.buf, lang)
+					if parser then
+						parser:parse(true)
+					end
+				end)
 			end
 		end,
 	})

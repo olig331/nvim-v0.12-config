@@ -16,6 +16,8 @@ function M.setup()
 		"https://github.com/stevearc/conform.nvim",
 		"https://github.com/mfussenegger/nvim-lint",
 		"https://github.com/seblj/roslyn.nvim",
+		"https://github.com/tpope/vim-dadbod",
+		"https://github.com/kristijanhusak/vim-dadbod-completion",
 		"https://github.com/MagicDuck/grug-far.nvim",
 		"https://github.com/windwp/nvim-ts-autotag",
 		"https://github.com/vuki656/package-info.nvim",
@@ -43,6 +45,8 @@ function M.setup()
 	packadd("conform.nvim")
 	packadd("nvim-lint")
 	packadd("roslyn.nvim")
+	packadd("vim-dadbod")
+	packadd("vim-dadbod-completion")
 	-- packadd("oil.nvim")
 	packadd("fyler.nvim")
 	packadd("nvim.undotree")
