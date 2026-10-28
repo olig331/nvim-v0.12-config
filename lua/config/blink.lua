@@ -23,7 +23,20 @@ function M.setup()
 			menu = { auto_show = true },
 			documentation = { auto_show = true, auto_show_delay_ms = 200 },
 		},
-		sources = { default = { "lsp", "path", "buffer", "snippets" } },
+		sources = {
+			default = { "lsp", "path", "buffer", "snippets" },
+			per_filetype = {
+				sql = { "dadbod", "buffer" },
+				cs = { "dadbod", "lsp", "path", "buffer", "snippets" },
+				c_sharp = { "dadbod", "lsp", "path", "buffer", "snippets" },
+			},
+			providers = {
+				dadbod = {
+					name = "Dadbod",
+					module = "config.dadbod",
+				},
+			},
+		},
 		cmdline = {
 			keymap = {
 				preset = "none",

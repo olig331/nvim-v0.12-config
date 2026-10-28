@@ -2,6 +2,16 @@ local M = {}
 
 function M.setup()
 	require("conform").setup({
+		formatters = {
+			operators_eol = {
+				command = "perl",
+				args = { "-0pe", [[s/[ \t]*\n([ \t]*)(&&|\|\|) /" $2\n$1"/ge]] },
+			},
+			no_trailing_comma = {
+				command = "perl",
+				args = { "-0pe", [==[s/,([ \t]*\n[ \t]*[}\]])/$1/g]==] },
+			},
+		},
 		formatters_by_ft = {
 			lua = { "stylua" },
 			python = { "black" },
@@ -22,7 +32,7 @@ function M.setup()
 			cpp = { "clang_format" },
 			vue = { "eslint_d", "prettierd" },
 			svelte = { "eslint_d", "prettierd" },
-			cs = { "csharpier", lsp_format = "last" },
+			cs = { "csharpier", "operators_eol", "no_trailing_comma", "trim_whitespace", lsp_format = "last" },
 			dart = { "dart_format" },
 		},
 		format_after_save = function(bufnr)
