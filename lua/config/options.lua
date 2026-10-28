@@ -25,6 +25,17 @@ function M.setup()
 	opt.spelllang = "en"
 	opt.spelloptions:append("camel")
 	opt.spellfile = vim.fn.stdpath("config") .. "/spell/en.utf-8.add"
+	vim.g.clipboard = {
+		name = "OSC 52",
+		copy = {
+			["+"] = require("vim.ui.clipboard.osc52").copy("+"),
+			["*"] = require("vim.ui.clipboard.osc52").copy("*"),
+		},
+		paste = {
+			["+"] = require("vim.ui.clipboard.osc52").paste("+"),
+			["*"] = require("vim.ui.clipboard.osc52").paste("*"),
+		},
+	}
 	opt.clipboard = "unnamedplus"
 
 	opt.encoding = "utf-8"

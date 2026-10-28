@@ -10,6 +10,21 @@ function M.setup()
 	vim.g.loaded_netrw = 1
 	vim.g.loaded_netrwPlugin = 1
 	vim.g.netrw_banner = 0
+
+	-- rustaceanvim reads this at init, so it must be set before plugins load
+	-- (not in after/ftplugin/rust.lua).
+	vim.g.rustaceanvim = {
+		server = {
+			settings = {
+				["rust-analyzer"] = {
+					check = {
+						command = "clippy",
+						extraArgs = { "--", "-W", "clippy::pedantic", "-W", "clippy::nursery" },
+					},
+				},
+			},
+		},
+	}
 end
 
 return M

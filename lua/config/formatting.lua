@@ -15,7 +15,7 @@ function M.setup()
 			css = { "prettierd" },
 			html = { "prettierd" },
 			markdown = { "prettierd" },
-			rust = { "rustfmt" },
+			rust = { "trim_whitespace", "rustfmt" },
 			zig = { "zigfmt" },
 			sh = { "shfmt" },
 			c = { "clang_format" },
